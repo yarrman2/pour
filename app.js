@@ -253,7 +253,7 @@ ingame.prototype = {
             this.glass.y = glassY;
             this.flow2.visible = true;
 
-            this.glass.rotation = Phaser.Math.linear(glassAngleMin, glassAngleMax, fill);
+            this.glass.rotation = Phaser.Math.linear(glassAngleMin, glassAngleMax, 1 - fill);
             //this.drawPolygon(this.glass.rotation);
 
             var t = this.game.add.tween(this.glass).to({
