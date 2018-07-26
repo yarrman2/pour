@@ -1,0 +1,4 @@
+{"file":"button.png","frames":{
+"down":{"x":0,"y":361,"w":642,"h":177,"offX":2,"offY":4,"sourceW":646,"sourceH":185},
+"out":{"x":0,"y":0,"w":642,"h":180,"offX":1,"offY":4,"sourceW":646,"sourceH":185},
+"over":{"x":0,"y":182,"w":642,"h":178,"offX":2,"offY":4,"sourceW":646,"sourceH":185}}}
