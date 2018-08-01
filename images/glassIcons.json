@@ -1,0 +1,68 @@
+{
+  "frames": {
+    "empty": {
+      "frame": {
+        "x": 0,
+        "y": 64,
+        "w": 52,
+        "h": 62
+      },
+      "spriteSourceSize": {
+        "x": 250,
+        "y": 611,
+        "w": 840,
+        "h": 690
+      },
+      "sourceSize": {
+        "w": 52,
+        "h": 62
+      },
+      "rotation": false,
+      "trimmed": false
+    },
+    "fail": {
+      "frame": {
+        "x": 54,
+        "y": 0,
+        "w": 52,
+        "h": 62
+      },
+      "spriteSourceSize": {
+        "x": 130,
+        "y": 611,
+        "w": 840,
+        "h": 690
+      },
+      "sourceSize": {
+        "w": 52,
+        "h": 62
+      },
+      "rotation": false,
+      "trimmed": false
+    },
+    "win": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 52,
+        "h": 62
+      },
+      "spriteSourceSize": {
+        "x": 190,
+        "y": 611,
+        "w": 840,
+        "h": 690
+      },
+      "sourceSize": {
+        "w": 52,
+        "h": 62
+      },
+      "rotation": false,
+      "trimmed": false
+    }
+  },
+  "meta": {
+    "image": "glassIcons.png",
+    "scale": 1
+  }
+}

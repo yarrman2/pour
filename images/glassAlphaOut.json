@@ -1,0 +1,88 @@
+{
+  "frames": {
+    "glass1alpha": {
+      "frame": {
+        "x": 276,
+        "y": 0,
+        "w": 140,
+        "h": 143
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 140,
+        "h": 143
+      },
+      "sourceSize": {
+        "w": 140,
+        "h": 143
+      },
+      "rotation": false,
+      "trimmed": false
+    },
+    "glass2alpha": {
+      "frame": {
+        "x": 276,
+        "y": 145,
+        "w": 148,
+        "h": 98
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 148,
+        "h": 98
+      },
+      "sourceSize": {
+        "w": 148,
+        "h": 98
+      },
+      "rotation": false,
+      "trimmed": false
+    },
+    "glass3alpha": {
+      "frame": {
+        "x": 142,
+        "y": 0,
+        "w": 132,
+        "h": 153
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 132,
+        "h": 153
+      },
+      "sourceSize": {
+        "w": 132,
+        "h": 153
+      },
+      "rotation": false,
+      "trimmed": false
+    },
+    "glass4alpha": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 140,
+        "h": 150
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 140,
+        "h": 150
+      },
+      "sourceSize": {
+        "w": 140,
+        "h": 150
+      },
+      "rotation": false,
+      "trimmed": false
+    }
+  },
+  "meta": {
+    "image": "glassAlpha.png",
+    "scale": 1
+  }
+}

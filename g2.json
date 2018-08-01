@@ -1,0 +1,25 @@
+{
+  "file": "g2.png",
+  "frames": {
+    "glass_out": {
+      "x": 0,
+      "y": 0,
+      "w": 265,
+      "h": 459,
+      "offX": 110,
+      "offY": 18,
+      "sourceW": 500,
+      "sourceH": 500
+    },
+    "glass5": {
+      "x": 267,
+      "y": 0,
+      "w": 152,
+      "h": 185,
+      "offX": 0,
+      "offY": 0,
+      "sourceW": 153,
+      "sourceH": 185
+    }
+  }
+}

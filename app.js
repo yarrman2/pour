@@ -1,4 +1,4 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
+var game = new Phaser.Game(800, 546, Phaser.AUTO, '', {
     canvas: 'gameContent'
 });
 
@@ -53,29 +53,32 @@ var states = {
 }
 
 var maxHeight;
-var glassWaterHeight = 0;
-var glassWaterHeightMin = 734;
-var glassWaterHeightMax = 495;
 var waterX = 248;
-var waterMaskX = 115;
-var waterMaskY = 250;
-var waterMaskWidth = 260;
-var waterMaskHeight = 236
+var waterMaskWidth = 115;
+var waterMaskHeight = 183
+var waterMaskY = 498 - waterMaskHeight;
+var waterMaskX = 422;
+
+var glassWaterHeight = 0;
+var glassWaterHeightMin = 501;
+var glassWaterHeightMax =  501 - waterMaskHeight;
+
 var speed = 100;
 var leftMax = 0;
 var rightMax = 0;
 var sideSpeed = 20;
-var sideDirection = -1;
+var sideDirection = - 1;
 var sideLeftX = 0;
 var sideRightX = 0;
 
 
 var glassAngleMin = 0.3;
-var glassAngleMax = 1.77;
-var glassAnchorX = 1;
+var glassAngleMax = 1.5;
+var glassAnchorX = 0.95;
 var glassAnchorY = 0;
-var glassX = 620;
-var glassY = 200;
+var glassX = 685;
+var glassY = 170;
+var glassY1 = 183;
 
 
 var tankWaterMin = 540;
@@ -92,13 +95,35 @@ function Tank() {
     var tank;
     return tank;
 }
-
-
-var ingame = function (game) {}
-ingame.prototype = {
+var boot = function (game) {}
+boot.prototype = {
     preload: function () {
-        this.game.load.image('glass_back', 'images/glass_back.png');
-        this.game.load.image('glass_mask', 'images/glass_mask.png');
+        this.game.load.image('bar', 'images/preloadBar.png');
+    },
+    create: function () {
+        game.state.start('preloader');
+    }
+}
+
+
+var preloader = function (game) {}
+preloader.prototype = {
+    preload: function () {
+
+        var bgmd = this.game.make.bitmapData(game.widh, 15);
+        bgmd.context.fillStyle = '#ffa00f';
+        bgmd.context.fillRect(0, 0, game.width, 15);
+        this.bg = this.game.add.sprite(0, this.game.height - 15, bgmd);
+
+        this.load.setPreloadSprite(this.bg);
+
+        this.game.load.image('london', 'images/london.png');
+        this.game.load.image('london_bg', 'images/bg_london.png');
+        this.game.load.image('mainMask', 'images/glassMainMask.png');
+        this.game.load.image('mask1', 'images/glass1mask.png');
+        this.game.load.atlas('glasses', 'images/glasses.png', 'images/glassesOut.json');
+        this.game.load.image('glass_back', 'images/glassMain.png');
+        this.game.load.image('glass_mask', 'images/glassMainMask.png');
         this.game.load.image('glass_cover', 'images/glass_cover.png');
         this.game.load.image('water', 'images/water.png');
         this.game.load.image('flow1', 'images/flow1.png');
@@ -108,8 +133,33 @@ ingame.prototype = {
         this.game.load.image('triang_glass_out', 'images/triangOut.png');
         this.game.load.image('rect_glass_cover', 'images/rect_glass_cover.png');
         this.game.load.image('line', 'images/dotted_line.png');
+        this.game.load.json('grad');
+        this.game.load.onFileComplete.add(function (progress, file, success, t, t1) {
+            console.log(progress, file, success, t, t1);
+        })
+        this.game.load.onLoadComplete.add(function (progress, file, success, t, t1) {
+            game.state.start('menu');
+        })
+    },
+}
+
+var ingame = function (game) {}
+ingame.prototype = {
+    preload: function () {
+        if (!state) {
+            state = states.idle;
+        }
     },
     create: function () {
+        window.self = this;
+        this.game.stage.backgroundColor = 25000
+        this.grad = this.game.cache.getJSON('grad');
+        this.back = this.game.add.sprite(0,0, 'london');
+        this.back.x = 0;
+        this.back.y = 0;
+
+        //this.back.visible = false;
+
         this.scoreText = this.game.add.text(50, 20, "Scores: " + scores, {
             align: 'left',
             fontSize: '25px',
@@ -118,46 +168,34 @@ ingame.prototype = {
         this.graphics = null;
         this.glassGroup = this.game.add.group();
         this.glass = this.game.add.sprite(0, 0, 'glass_back');
-        this.glass.scale.set(0.30);
+
+        //this.glass.scale.set(0.30);
         this.glass.anchor.y = 1;
-        this.glass.x = 100;
-        this.glass.y = 580;
+        this.glass.x = 420;
+        this.glass.y = 537;
 
-        this.water = this.game.add.sprite(0, 0, 'water');
-        this.water.scale.set(0.35, 0.19)
-        this.water.anchor.x = 0.5;
-        this.water.anchor.y = 1;
+
+
+        this.water = this.game.add.graphics(0, 0);
+        this.water.beginFill(0xffbf00);
+        this.water.drawRect(0, 0, waterMaskWidth, waterMaskHeight);
+        this.water.endFill();
+        this.water.x = waterMaskX;
         this.water.y = glassWaterHeightMin;
-        this.water.x = waterX;
-        this.waterMask = this.game.add.graphics(0, 0);
-        this.waterMask.beginFill(0xffffff);
-        this.waterMask.drawRect(0, 0, waterMaskWidth, waterMaskHeight);
-        this.waterMask.x = waterMaskX;
-        this.waterMask.y = waterMaskY;
-
-
-        this.flow = this.game.add.sprite(0, 0, 'flow1');
-        this.flow.x = 190;
-        this.flow.y = 120;
-        this.flow.scale.y = 0.7;
+        this.water.parent.setChildIndex(this.water, 1);
 
         this.bottle = this.game.add.sprite(0, 0, 'bottle');
         window.bottle = this.bottle;
-        this.bottle.x = 235;
-        this.bottle.y = 145;
-        this.bottle.rotation = 2.5;
-        this.bottle.anchor.set(0.5, 0);
-        this.bottle.scale.set(0.25);
+        this.bottle.x = 0;
+        this.bottle.y = 0;
 
         this.flow1 = this.game.add.group();
-        this.flow1.addChild(this.flow);
         this.flow1.addChild(this.bottle);
         this.flow1.visible = false;
 
         this.flow2 = this.game.add.sprite(0, 0, 'flow2');
-        this.flow2.x = 520;
-        this.flow2.y = 140;
-        this.flow2.scale.y = 0.7;
+        this.flow2.x = 658;
+        this.flow2.y = 170;
         this.flow2.visible = false;
 
         /*    this.waterMaskMove = this.game.add.graphics(0, 0);
@@ -167,28 +205,32 @@ ingame.prototype = {
            this.waterMaskMove.y = waterMaskY; */
 
         //this.water.mask = this.waterGlassMask;
-        this.water.mask = this.waterMask;
-
-        this.glassGroup.addChild(this.water);
         this.glassGroup.addChild(this.glass);
 
 
         maxHeight = this.glass.height;
 
-        this.tankWater = this.game.add.sprite(0, 0, 'water');
-        window.tankWater = this.tankWater;
-        this.tankWater.scale.set(0.2, 0.19)
-        this.tankWater.anchor.x = 0.5;
-        this.tankWater.anchor.y = 0;
-        this.tankWater.x = 650;
-        this.g = null;
 
-        this.line = this.game.add.sprite(655, 0, 'line');
+        this.tankWater = this.game.add.graphics(0, 0);
+        this.tankWater.beginFill(0xffbf00);
+        this.tankWater.drawRect(0, 0, 155, 220);
+        this.tankWater.endFill();
+        this.tankWater.x = 600;
+        this.tankWater.y = 600;
+        this.tankWater.parent.setChildIndex(this.tankWater, 2);
+
+
+
+        this.line = this.game.add.sprite(678, 0, 'line');
         this.line.anchor.set(0.5);
         this.line.scale.set(0.5);
-        window.line = this.line;
+        this.line;
 
-        this.tanks = [];
+
+        this.tanksProps = [];
+        this.tank = this.game.add.image(680, 500, 'glasses', 'glass1');
+        this.tank.anchor.setTo(0.5, 1);
+        //this.tankMask = this.game.add.image(680, 500, 'glasses', 'glass1mask');
         this.initTanks();
         this.changeTank();
         this.game.input.onDown.add(function () {
@@ -198,8 +240,7 @@ ingame.prototype = {
                     leftMax = (Math.random() * 20) >> 0;
                     rightMax = (Math.random() * 20) >> 0;
                     sideSpeed = (Math.random() * 20) >> 0;
-                    sideLeftX = waterX - leftMax;
-                    sideRightX = waterX + rightMax;
+
                     glassWaterHeight = glassWaterHeightMin;
                     this.flow1.visible = true;
                     break;
@@ -236,9 +277,11 @@ ingame.prototype = {
             }
         } else if (state === states.release) {
             state = states.releasing;
-            var fill = 1 - (glassWaterHeight - glassWaterHeightMax) / (glassWaterHeightMin - glassWaterHeightMax);
-
-            var result = this[this.tank.maskProps.func](this.tank.maskProps, fill);
+        //    var fill = Phaser.Math.clamp( 1 - (glassWaterHeight - glassWaterHeightMax) / (glassWaterHeightMin - glassWaterHeightMax), 0.1, 1);
+            var fill = Phaser.Math.clamp(glassWaterHeightMin - glassWaterHeight, 0, glassWaterHeightMin - glassWaterHeightMax - 1) >> 0;
+            var sfill = this.grad.mainMask.grad[fill][2];
+            var fillProc = this.grad.mainMask.grad[fill][3];
+            var result = this.calcResult(sfill);
             //this.tank.resultH(fill);
 
             if (result.result === 0) {
@@ -253,17 +296,19 @@ ingame.prototype = {
             this.glass.y = glassY;
             this.flow2.visible = true;
 
-            this.glass.rotation = Phaser.Math.linear(glassAngleMin, glassAngleMax, 1 - fill);
+            this.glass.rotation = Phaser.Math.linear(glassAngleMin, glassAngleMax, 1 - fillProc);
             //this.drawPolygon(this.glass.rotation);
+
 
             var t = this.game.add.tween(this.glass).to({
                 rotation: glassAngleMax,
-            }, 3000 * fill, "Linear");
+                y: glassY1
+            }, 3000 * fillProc, "Linear");
             t.onUpdateCallback(function (tween, value, tweenData) {
                 this.drawPolygon(tween.target.rotation);
             }, this);
             t.onComplete.add(function () {
-                this.drawPolygon(Math.min(glassAngleMax, glassAngleMax * fill), true);
+                this.drawPolygon(Math.min(glassAngleMax, glassAngleMax * fillProc), true);
                 this.flow2.visible = false;
                 this.flow1.visible = false;
                 if (result.result === 0) {
@@ -276,13 +321,16 @@ ingame.prototype = {
             }, this);
             t.start();
 
-            this.tankWater.y = tankWaterMin;
-            //            var yMax = Math.max(600, tankWaterMax * fill)
+            var tankY = this.tanksProps[this.tankIdx].y;
+            var tankHeight = this.tanksProps[this.tankIdx].height
+            this.tankWater.y = tankY + tankHeight;
+                        //            var yMax = Math.max(600, tankWaterMax * fill)
 
-            var yMax = Phaser.Math.clamp((1 - result.fill) * (tankWaterMin - tankWaterMax) + tankWaterMax, tankWaterMax, tankWaterMin);
+            //var yMax = Phaser.Math.clamp((1 - result.fill) * (tankWaterMin - tankWaterMax) + tankWaterMax, tankWaterMax, tankWaterMin);
+            yMax = this.tankWater.y - result.fill;
             var t2 = this.game.add.tween(this.tankWater).to({
                 y: yMax
-            }, 3000 * fill, "Linear");
+            }, 3000 * fillProc, "Linear");
             t2.onUpdateCallback(function (tween, value, tweenData) {
                 var y = tween.target.y;
             }, this);
@@ -295,28 +343,59 @@ ingame.prototype = {
             state = states.scores;
         } else if (state == states.scores) {
             this.glass.anchor.set(0, 1);
-            this.glass.x = 100;
-            this.glass.y = 580;
+            //this.glass.anchor.y = 1;
+            this.glass.x = 420;
+            this.glass.y = 537;
             this.glass.rotation = 0;
             this.tankWater.y = tankWaterMin;
             state = states.idle;
             this.scoreText.text = 'Scores: ' + scores;
             this.changeTank();
         } else if (state == states.menu) {
+            this.drawBg();
             this.game.state.start('menu');
         }
     },
     render: function () {
-        // lines.forEach(line => game.debug.geom(line));
+        //lines.forEach(line => game.debug.geom(line));
     },
     getCurrentLine: function () {
-        var props = this.tank.maskProps;
-        var max = props.minWater - props.height;
-        var minL = (max + props.height * 0.3) >> 0;
-        var maxL = (max + props.height * 0.7) >> 0;
-        lineCurrent = Phaser.Math.between(minL, maxL);
+        var props = this.tanksProps[this.tankIdx];
+        lineCurrent = Phaser.Math.linear(0.3 * props.height, 0.7 * props.height, Math.random());
     },
+    calcResult: function (S) {
+       var _frameName = this.tank.frameName;
+       var gradName = 'mask' + _frameName.replace('glass', '');
+       var grad = this.grad[gradName]; // [0 - полщадь в слоеб 1 - площадо слоя/ общая площадь, 2 - суммарная площадь на текущем слое, 3 - площадь до высоты / общую площадь]
+       var h = 0;
+       var proc = 0;
+       var res = -1;
+       if (grad.S < S) {
+           h = grad.grad.length;
+           proc = 1;
+           res = 1;
+       } else {
+           for(var i = 0; grad.grad.length; i++) {
+              if (grad.grad[i][2] < S) {
+                continue;
+              } else {
+                  h = i;
+                  proc = grad.grad[i][3];
+                  break;
+              }
+           }
+       }
 
+      if (h >= lineCurrent && h < grad.grad.length) {
+          res = 0;
+      }
+
+       return {
+           fill: h,
+           fillProc: proc,
+           result: res,
+       };
+    },
     rectResult: function (props, fill) {
         var s = props.width;
         var S0 = waterMaskWidth;
@@ -364,111 +443,118 @@ ingame.prototype = {
     },
 
     initTanks: function () {
-        /**
-         * props1
-         */
-
+        this.tanksProps = [];
         var props1 = {
-            x: 622,
-            y: 405,
-            width: 76,
-            height: 185,
+            height: this.grad['mask1'].grad.length,
+            y: 237,
+            x: 610,
             minWater: 527,
-            scaleX: 0.3,
-            scaleY: 0.4,
-            points: [],
-            name: 'rect_glass_back',
-            func: 'rectResult',
+            grad: this.grad['mask1'],
+            name: 'glass1',
+            bmd: 'bmd1',
         };
-        props1.points = [
-            props1.x + props1.width, props1.minWater,
-            props1.x + props1.width - props1.width, props1.minWater,
-            props1.x + props1.width - props1.width, props1.minWater - props1.height,
-            props1.x + props1.width, props1.minWater - props1.height,
-        ];
-
-        var tank1 = this.createTank(props1);
-        this.tanks.push(tank1);
-
-        /**
-         * props1
-         */
-
+        this.tanksProps.push(props1);
         var props2 = {
-            x: 610,
-            y: 405,
-            width: 101,
-            height: 185,
+            height: this.grad['mask2'].grad.length,
+            y: 245,
+            x: 607,
             minWater: 527,
-            scaleX: 0.4,
-            scaleY: 0.4,
-            points: [],
-            name: 'rect_glass_back',
-            func: 'rectResult',
+            grad: this.grad['mask2'],
+            name: 'glass2',
+            bmd: 'bmd2',
         };
-        props2.points = [
-            props2.x + props2.width, props2.minWater,
-            props2.x + props2.width - props2.width, props2.minWater,
-            props2.x + props2.width - props2.width, props2.minWater - props2.height,
-            props2.x + props2.width, props2.minWater - props2.height,
-        ];
-
-        var tank2 = this.createTank(props2);
-        this.tanks.push(tank2);
-        /**
-         * props3
-         */
-
+        this.tanksProps.push(props2);
         var props3 = {
-            x: 597,
-            y: 405,
-            width: 126,
-            height: 185,
+            height: this.grad['mask3'].grad.length,
+            y: 254,
+            x: 614,
             minWater: 527,
-            scaleX: 0.5,
-            scaleY: 0.4,
-            points: [],
-            name: 'rect_glass_back',
-            func: 'rectResult',
+            grad: this.grad['mask3'],
+            name: 'glass3',
+            bmd: 'bmd3',
         };
-        props3.points = [
-            props3.x + props3.width, props3.minWater,
-            props3.x + props3.width - props3.width, props3.minWater,
-            props3.x + props3.width - props3.width, props3.minWater - props3.height,
-            props3.x + props3.width, props3.minWater - props3.height,
-        ];
-
-        var tank3 = this.createTank(props3);
-        this.tanks.push(tank3);
-
-        /**
-         * props4
-         */
-
+        this.tanksProps.push(props3);
         var props4 = {
+            height: this.grad['mask4'].grad.length,
+            y: 317,
             x: 610,
-            y: 435,
-            posY: 610,
-            width: 351 * 0.3,
-            height: 634 * 0.3 ,//634,
-            widthTop: 698 * 0.3,
-            minWater: 540,
-            scaleX: 0.3,
-            scaleY: 0.3,
-            points: [],
-            name: 'triang_glass_out',
-            func: 'triangOutResult',
-
+            minWater: 527,
+            grad: this.grad['mask4'],
+            name: 'glass4',
+            bmd: 'bmd4',
         };
-        props4.points = [
-            props4.x + props4.width, props4.minWater,
-            props4.x, props4.minWater,
-            props4.x - (props4.widthTop - props4.width) / 2, props4.minWater - props4.height,
-            props4.x + (props4.widthTop - (props4.width / 2)), props4.minWater - props4.height,
-        ];
+        this.tanksProps.push(props4);
 
-        var tank4 = this.createTank(props4);
-        this.tanks.push(tank4);
+
+        var bmdMask1 = this.game.make.bitmapData(this.game.width, this.game.height);
+        bmdMask1.context.fillStyle = '#ffffff'
+        bmdMask1.context.fillRect(0,0,game.width, game.height);
+
+        var props = this.tanksProps[0];
+        var x = props.x;
+        var y = props.y;
+        var alpha = new Phaser.Image(this.game, 0,0, 'glasses', 'glass1mask')
+        var london = new Phaser.Image(this.game, 0,0, 'london');
+        var mainMask = new Phaser.Image(this.game, 0, 0, 'mainMask');
+
+        bmdMask1.copyRect(london, new Phaser.Rectangle(0,0, london.width, london.height), 0,0);
+        bmdMask1.copyRect(mainMask, new Phaser.Rectangle(0, 0, mainMask.width, mainMask.height), 422, 318, 1, 'xor') ;
+        bmdMask1.copyRect(alpha, new Phaser.Rectangle(0, 0, alpha.width, alpha.height), x, y, 1 , 'xor') ;
+
+        this.game.cache.addBitmapData('bmd1', bmdMask1);
+
+        var bmdMask2 = this.game.make.bitmapData(this.game.width, this.game.height);
+        bmdMask2.context.fillStyle = '#ffffff'
+        bmdMask2.context.fillRect(0,0,game.width, game.height);
+
+        var props = this.tanksProps[1];
+        var x = props.x;
+        var y = props.y;
+        var alpha = new Phaser.Image(this.game, 0,0, 'glasses', 'glass2mask')
+        var london = new Phaser.Image(this.game, 0,0, 'london');
+        var mainMask = new Phaser.Image(this.game, 0, 0, 'mainMask');
+
+        bmdMask2.copyRect(london, new Phaser.Rectangle(0,0, london.width, london.height), 0,0);
+        bmdMask2.copyRect(mainMask, new Phaser.Rectangle(0, 0, mainMask.width, mainMask.height), 422, 318, 1, 'xor') ;
+        bmdMask2.copyRect(alpha, new Phaser.Rectangle(0, 0, alpha.width, alpha.height), x, y, 1 , 'xor') ;
+
+        this.game.cache.addBitmapData('bmd2', bmdMask2);
+
+        var bmdMask3 = this.game.make.bitmapData(this.game.width, this.game.height);
+        bmdMask3.context.fillStyle = '#ffffff'
+        bmdMask3.context.fillRect(0,0,game.width, game.height);
+
+        var props = this.tanksProps[2];
+        var x = props.x;
+        var y = props.y;
+        var alpha = new Phaser.Image(this.game, 0,0, 'glasses', 'glass3mask')
+        var london = new Phaser.Image(this.game, 0,0, 'london');
+        var mainMask = new Phaser.Image(this.game, 0, 0, 'mainMask');
+
+        bmdMask3.copyRect(london, new Phaser.Rectangle(0,0, london.width, london.height), 0,0);
+        bmdMask3.copyRect(mainMask, new Phaser.Rectangle(0, 0, mainMask.width, mainMask.height), 422, 318, 1, 'xor') ;
+        bmdMask3.copyRect(alpha, new Phaser.Rectangle(0, 0, alpha.width, alpha.height), x, y, 1 , 'xor') ;
+
+        this.game.cache.addBitmapData('bmd3', bmdMask3);
+
+        var bmdMask4 = this.game.make.bitmapData(this.game.width, this.game.height);
+        bmdMask4.context.fillStyle = '#ffffff'
+        bmdMask4.context.fillRect(0,0,game.width, game.height);
+
+        var props = this.tanksProps[3];
+        var x = props.x;
+        var y = props.y;
+        var alpha = new Phaser.Image(this.game, 0,0, 'glasses', 'glass4mask')
+        var london = new Phaser.Image(this.game, 0,0, 'london');
+        var mainMask = new Phaser.Image(this.game, 0, 0, 'mainMask');
+
+        bmdMask4.copyRect(london, new Phaser.Rectangle(0,0, london.width, london.height), 0,0);
+        bmdMask4.copyRect(mainMask, new Phaser.Rectangle(0, 0, mainMask.width, mainMask.height), 422, 318, 1, 'xor') ;
+        bmdMask4.copyRect(alpha, new Phaser.Rectangle(0, 0, alpha.width, alpha.height), x, y, 1 , 'xor') ;
+
+        this.game.cache.addBitmapData('bmd4', bmdMask4);
+
+
     },
     drawMask: function (points) {
         if (!points) {
@@ -487,75 +573,106 @@ ingame.prototype = {
         this.tankWater.y = tankWaterMin;
     },
     changeTank: function (idx) {
-        if (!idx) {
-            idx = (Math.random() * this.tanks.length) >> 0;
+        if (idx == undefined) {
+            idx = (Math.random() * this.tanksProps.length) >> 0;
         }
         console.log(idx);
-        this.tanks.forEach(t => t.visible = false);
-        this.tank = this.tanks[idx];
-        this.tank.visible = true;
-        this.drawMask(this.tank.points);
-        this.drawSetMask(this.tank.maskProps);
-
-        this.tankWater.mask = this.g;
-
+        this.tankIdx = idx;
+        this.tank.frameName = "glass" + (idx + 1);
+        var props = this.tanksProps[idx]
+        this.drawBg(props);
         this.getCurrentLine();
-        this.line.y = lineCurrent;
+        this.line.y = props.y + props.height - lineCurrent;
+     },
+     drawBg: function (props) {
+
+        if (this.bg) {
+            this.bg.parent.removeChild(this.bg);
+        }
+        if (!props) {
+            this.bg = null;
+            return;
+        }
+        var bmd = game.cache.getBitmapData(props.bmd);
+        this.bg = this.game.add.sprite(0, 0, bmd);
+        this.bg.parent.setChildIndex(this.bg, 3);
+
     },
     drawPolygon: function (a, end) {
+        console.log(a);
         poly = new Phaser.Polygon();
         lines = [];
+        this.glass.anchor.set(glassAnchorX, glassAnchorY);
+        this.glass.x = glassX;
+        //this.glass.y = glassY;
         var g = this.glass;
         a = a || 0.3
         g.rotation = a;
-        var line0 = new Phaser.Line().fromAngle(g.x, g.y, g.rotation + Math.PI, 10);
-        var line1 = new Phaser.Line().fromAngle(line0.end.x, line0.end.y, g.rotation + Math.PI / 2, waterMaskHeight);
-        var line2 = new Phaser.Line().fromAngle(line1.end.x, line1.end.y, g.rotation + Math.PI, waterMaskWidth);
-        var line4 = new Phaser.Line().fromAngle(line0.end.x, line0.end.y, g.rotation + Math.PI, 50);
 
-        var line3Pre1 = new Phaser.Line().fromAngle(line2.end.x, line2.end.y, g.rotation - Math.PI / 2, 1000);
-        var line3Pre2 = new Phaser.Line().fromAngle(line4.end.x, line4.end.y, Math.PI, 1000);
-        var points3 = line3Pre1.intersects(line3Pre2);
-        if (!points3) {
-            points3 = line2.intersects(line3Pre2);
+        var wt = 115;
+        var wb = 86;
+        var h = 180;
+        var dw = (wt - wb) / 2 + 3;
+        var gx = g.x - 3;
+        var gy = g.y + 3;
+
+        var line0 = new Phaser.Line().fromAngle(gx, gy, g.rotation + Math.PI, 15);
+
+        var line1_pre = new Phaser.Line(gx,gy, gx - dw, gy + h);
+        var angle1 = line1_pre.angle + a;
+        var line1 = new Phaser.Line().fromAngle(gx, gy, angle1, line1_pre.length);
+
+        var line2_pre = new Phaser.Line(gx, gy, gx - wb - 16, gy + h);
+        var angle2 = line2_pre.angle + a;
+        var line2_pre2 = new Phaser.Line().fromAngle(gx, gy, angle2, line2_pre.length);
+        var line2 = new Phaser.Line(line1.end.x, line1.end.y, line2_pre2.end.x, line2_pre2.end.y);
+
+        var line3_pre = new Phaser.Line().fromAngle(gx, gy, g.rotation + Math.PI, wt + 3);
+        var line3_pre2 = new Phaser.Line(line2.end.x, line2.end.y, line3_pre.end.x, line3_pre.end.y);
+        var line3_pre3 = new Phaser.Line().fromAngle(line0.end.x, line0.end.y, Math.PI, 500);
+
+        var line3;
+        var line4;
+        var intersects = line3_pre3.intersects(line3_pre2);
+        console.log(intersects);
+        var isTriang = false;
+        if (!intersects) {
+            isTriang = true;
+            intersects = line3_pre3.intersects(line2);
         }
-        var triang = false;
-        if (!points3) {
-            points3 = line1.intersects(line3Pre2);
-            triang = true;
-        }
-        var line3 = new Phaser.Line(line2.end.x, line2.end.y, points3.x, points3.y);
-        var line5 = new Phaser.Line(points3.x, points3.y, line4.end.x, line4.end.y);
 
-        //lines.push(line0);
-        lines.push(line1);
-        lines.push(line2);
-        lines.push(line4);
-        lines.push(line3Pre1);
-        lines.push(line3Pre2);
-        lines.push(line5);
-        lines.push(line3);
+        line3 = new Phaser.Line(line0.end.x, line0.end.y, intersects.x, intersects.y);
+        line4 = new Phaser.Line(line2.end.x, line2.end.y, intersects.x, intersects.y);
 
-        if (triang) {
+        lines.push(line0); // верхний смещение влево
+        lines.push(line1); // правый вниз
+        lines.push(line2); // низ влево
+
+        //lines.push(line3_pre3); // горизонтальный влево для пересечения
+        lines.push(line3); // горизонтальный влево
+        lines.push(line4); // левый вверх до пересечения
+
+        if (isTriang) {
             poly.setTo([
-                new Phaser.Point(line1.start.x, line1.start.y),
-                new Phaser.Point(line2.start.x, line2.start.y),
-                new Phaser.Point(points3.x, points3.y),
+                line0.start.x, line0.start.y,
+                line1.end.x, line1.end.y,
+                intersects.x, intersects.y,
+                line0.end.x, line0.end.y
             ]);
-            console.log(poly.points);
         } else {
             poly.setTo([
-                new Phaser.Point(line1.start.x, line1.start.y),
-                new Phaser.Point(line2.start.x, line2.start.y),
-                new Phaser.Point(line3.start.x, line3.start.y),
-                new Phaser.Point(line5.start.x, line5.start.y),
-                new Phaser.Point(line5.end.x, line5.end.y)
+                line0.start.x, line0.start.y,
+                line1.end.x, line1.end.y,
+                line2.end.x, line2.end.y,
+                intersects.x, intersects.y,
+                line0.end.x, line0.end.y
             ]);
         }
+
         this.graphics = this.graphics || this.game.add.graphics(0, 0);
         this.graphics.clear();
         if (!end) {
-            this.graphics.beginFill(0x3bade2);
+            this.graphics.beginFill(0xffbf00);
             this.graphics.drawPolygon(poly.points);
             this.graphics.endFill();
         }
@@ -576,14 +693,74 @@ ingame.prototype = {
 
 var testGraph = function (game) {}
 testGraph.prototype = {
+    preload: function () {
+        this.game.load.image('mask1', 'prepareimage/glass1mask.png');
+        this.game.load.image('mask2', 'prepareimage/glass2mask.png');
+        this.game.load.image('mask3', 'prepareimage/glass3mask.png');
+        this.game.load.image('mask4', 'prepareimage/glass4mask.png');
+        this.game.load.image('mainMask', 'prepareimage/glassMainMask.png');
+        this.game.load.image('london', 'images/bg_london.png');
+
+        this.game.load.json('grad');
+        this.game.load.atlas('alpha', 'images/glasses.png', 'images/glassesOut.json');
+    },
     create: function () {
-        var group = this.add.group();
-        var g1 = this.game.add.graphics();
-        var poly = new Phaser.Polygon();
-        g1.beginFill(0xFFFFFF, 1);
-        group.addChild(g1);
+        window.self = this;
+        this.game.stage.backgroundColor = 25000
+        this.bmd = this.game.make.bitmapData(this.game.width, this.game.height);
+
+        this.bmdMask = this.game.make.bitmapData(this.game.width, this.game.height);
+        this.bmdMask.context.fillStyle = '#ffffff'
+        var alpha = new Phaser.Image(this.game, 0,0, 'alpha', 'glass1mask')
+        var london = new Phaser.Image(this.game, 0,0, 'london');
+        this.bmdMask.copyRect(london, new Phaser.Rectangle(0,0, london.width, london.height), 0,0);
+        this.bmdMask.copyRect(alpha, new Phaser.Rectangle(0, 0, alpha.width, alpha.height), 150,150, 1, 'xor') ;
+        this.bg = this.game.add.sprite(0,0,this.bmdMask);
+
+        return;
+        var el = game.cache._cache.image.mainMask.data;
+        game.context.drawImage(el, 0,0, el.width, el.height);
+        window.image = game.context.getImageData(0,0,el.width, el.height);
+        var data = image.data;
+        var Sfull = el.width * el.height;
+        var S = 0;
+        var Sgrad = [];
+        for(let row = 0; row < el.height; row++) {
+            Sgrad[row] = [0, 0];
+            for(let col = 0; col < el.width; col++) {
+                var idx = row * el.height + col;
+                var px = [data[idx], data[idx + 1], data[idx + 2], data[idx + 3]];
+                var colorSum = px[0] + px[1] + px[2];
+                if (colorSum > 0) {
+                    S++;
+                    Sgrad[row][0]++;
+                }
+            }
+        }
+
+        Sgrad = Sgrad.map(g => {
+            g[1] = g[0] / S;
+            return g;
+        });
+        let proc  = 0;
+        let sum = 0;
+        for(let i = 0; i < Sgrad.length; i++) {
+            var gr = Sgrad[i];
+            gr[2] = gr[0] + sum;
+            sum = gr[2];
+            gr[3] = gr[1] + proc;
+            proc = gr[3];
+        }
+        console.log(S, Sfull, Sgrad);
+        window.grad = {
+            S: S,
+            grad: Sgrad
+        }
+        window.sgrad = JSON.stringify(grad);
     }
 }
+
+
 
 function solverSqrt(a, b, c) {
     var D = b * b - 4 * a * c;
@@ -597,7 +774,24 @@ function solverSqrt(a, b, c) {
     return [x1, x2];
 }
 
+function getSeg(R, h) {
+    var a = 2 * Math.acos( (R-h) / R );
+    var S = (R * R / 2) * (a - Math.sin(a));
+    console.log(S, a) ;
+    return  S;
+}
+function getElipseSegment(a, b, h) {
+    var x0 = b - h;
+    var y0 = (b / a) * Math.sqrt(2 * a * h - h * h);
+    var S = a * b * Math.acos(x0 / a) - x0 * y0;
+    console.log(S);
+    return S;
+}
+
+
+game.state.add('boot', boot);
+game.state.add('preloader', preloader);
 game.state.add('menu', menu);
 game.state.add('ingame', ingame);
 game.state.add('testGraph', testGraph);
-game.state.start('menu');
+game.state.start('boot');

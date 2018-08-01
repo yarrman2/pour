@@ -1,0 +1,9 @@
+{"file":"glasses.png","frames":{
+"glass1":{"x":0,"y":0,"w":152,"h":265,"offX":8,"offY":2,"sourceW":168,"sourceH":285},
+"glass1mask":{"x":154,"y":259,"w":140,"h":150,"offX":0,"offY":0,"sourceW":140,"sourceH":150},
+"glass2":{"x":154,"y":0,"w":155,"h":257,"offX":7,"offY":9,"sourceW":168,"sourceH":285},
+"glass2mask":{"x":276,"y":437,"w":148,"h":98,"offX":0,"offY":0,"sourceW":148,"sourceH":98},
+"glass3":{"x":311,"y":0,"w":138,"h":248,"offX":15,"offY":19,"sourceW":168,"sourceH":285},
+"glass3mask":{"x":0,"y":267,"w":132,"h":153,"offX":0,"offY":0,"sourceW":132,"sourceH":153},
+"glass4":{"x":311,"y":250,"w":152,"h":185,"offX":8,"offY":80,"sourceW":168,"sourceH":285},
+"glass4mask":{"x":134,"y":411,"w":140,"h":143,"offX":0,"offY":0,"sourceW":140,"sourceH":143}}}

@@ -1,0 +1,168 @@
+{
+  "frames": {
+    "glass1": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 265
+      },
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 2,
+        "w": 168,
+        "h": 285
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 265
+      },
+      "rotation": false,
+      "trimmed": false
+    },
+    "glass4mask": {
+      "frame": {
+        "x": 154,
+        "y": 259,
+        "w": 140,
+        "h": 150
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 140,
+        "h": 150
+      },
+      "sourceSize": {
+        "w": 140,
+        "h": 150
+      },
+      "rotation": false,
+      "trimmed": false
+    },
+    "glass2": {
+      "frame": {
+        "x": 154,
+        "y": 0,
+        "w": 155,
+        "h": 257
+      },
+      "spriteSourceSize": {
+        "x": 7,
+        "y": 9,
+        "w": 168,
+        "h": 285
+      },
+      "sourceSize": {
+        "w": 155,
+        "h": 257
+      },
+      "rotation": false,
+      "trimmed": false
+    },
+    "glass2mask": {
+      "frame": {
+        "x": 276,
+        "y": 437,
+        "w": 148,
+        "h": 98
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 148,
+        "h": 98
+      },
+      "sourceSize": {
+        "w": 148,
+        "h": 98
+      },
+      "rotation": false,
+      "trimmed": false
+    },
+    "glass3": {
+      "frame": {
+        "x": 311,
+        "y": 0,
+        "w": 138,
+        "h": 248
+      },
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 19,
+        "w": 168,
+        "h": 285
+      },
+      "sourceSize": {
+        "w": 138,
+        "h": 248
+      },
+      "rotation": false,
+      "trimmed": false
+    },
+    "glass3mask": {
+      "frame": {
+        "x": 0,
+        "y": 267,
+        "w": 132,
+        "h": 153
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 132,
+        "h": 153
+      },
+      "sourceSize": {
+        "w": 132,
+        "h": 153
+      },
+      "rotation": false,
+      "trimmed": false
+    },
+    "glass4": {
+      "frame": {
+        "x": 311,
+        "y": 250,
+        "w": 152,
+        "h": 185
+      },
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 80,
+        "w": 168,
+        "h": 285
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 185
+      },
+      "rotation": false,
+      "trimmed": false
+    },
+    "glass1mask": {
+      "frame": {
+        "x": 134,
+        "y": 411,
+        "w": 140,
+        "h": 143
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 140,
+        "h": 143
+      },
+      "sourceSize": {
+        "w": 140,
+        "h": 143
+      },
+      "rotation": false,
+      "trimmed": false
+    }
+  },
+  "meta": {
+    "image": "glasses.png",
+    "scale": 1
+  }
+}
