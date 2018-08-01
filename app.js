@@ -133,10 +133,10 @@ preloader.prototype = {
         this.game.load.image('triang_glass_out', 'images/triangOut.png');
         this.game.load.image('rect_glass_cover', 'images/rect_glass_cover.png');
         this.game.load.image('line', 'images/dotted_line.png');
+        this.game.load.image('bubble', 'images/bubble.png');
+
         this.game.load.json('grad');
-        this.game.load.onFileComplete.add(function (progress, file, success, t, t1) {
-            console.log(progress, file, success, t, t1);
-        })
+       
         this.game.load.onLoadComplete.add(function (progress, file, success, t, t1) {
             game.state.start('menu');
         })
@@ -225,6 +225,10 @@ ingame.prototype = {
         this.line.anchor.set(0.5);
         this.line.scale.set(0.5);
         this.line;
+
+        this.emitter = this.game.add.emitter(150,150, 150);
+        this.emitter.gravity = 50;
+        this.emitter.makeParticles('bubble');
 
 
         this.tanksProps = [];
@@ -322,20 +326,24 @@ ingame.prototype = {
             t.start();
 
             var tankY = this.tanksProps[this.tankIdx].y;
+            var tankX = this.tanksProps[this.tankIdx].x;
             var tankHeight = this.tanksProps[this.tankIdx].height
             this.tankWater.y = tankY + tankHeight;
                         //            var yMax = Math.max(600, tankWaterMax * fill)
 
             //var yMax = Phaser.Math.clamp((1 - result.fill) * (tankWaterMin - tankWaterMax) + tankWaterMax, tankWaterMax, tankWaterMin);
             yMax = this.tankWater.y - result.fill;
+            var time = result.result == 1 ? 2000 * fillProc / result.fillProc : 3000 * fillProc;
             var t2 = this.game.add.tween(this.tankWater).to({
                 y: yMax
-            }, 3000 * fillProc, "Linear");
+            }, time, "Linear");
             t2.onUpdateCallback(function (tween, value, tweenData) {
                 var y = tween.target.y;
             }, this);
             t2.onComplete.add(function () {
-
+                if (result.result == 1) {
+                    this.startEmit(tankX + 70, tankY - 5, 80);
+                }
             }, this);
             t2.start();
 
@@ -352,8 +360,12 @@ ingame.prototype = {
             this.scoreText.text = 'Scores: ' + scores;
             this.changeTank();
         } else if (state == states.menu) {
-            this.drawBg();
-            this.game.state.start('menu');
+            state = states.menuAnimation
+            var self =  this;
+            setTimeout(function(){
+                self.drawBg();
+                this.game.state.start('menu');
+            }, 1000)
         }
     },
     render: function () {
@@ -372,7 +384,7 @@ ingame.prototype = {
        var res = -1;
        if (grad.S < S) {
            h = grad.grad.length;
-           proc = 1;
+           proc = S / grad.S;
            res = 1;
        } else {
            for(var i = 0; grad.grad.length; i++) {
@@ -556,6 +568,16 @@ ingame.prototype = {
 
 
     },
+    startEmit: function (x, y, speed) {
+        this.emitter.x = x;
+        this.emitter.y = y;
+        this.emitter.setXSpeed(-speed, speed)
+        this.emitter.setYSpeed(15, -35);
+        //this.emitter.particleDrag.set(-speed/10, -speed/15)
+
+        this.emitter.start(false, 1000, 1, 1000)
+//        this.emitter1.start(false, 1000, null, 1000)
+    },
     drawMask: function (points) {
         if (!points) {
             return;
@@ -691,6 +713,64 @@ ingame.prototype = {
     }
 }
 
+var testGraph2 = function (game) {}
+testGraph2.prototype = {
+    preload: function () {
+        this.game.load.image('bubble', 'images/bubble.png');
+    },
+    create: function () {
+        window.self  = this;
+
+        this.emitter = this.game.add.emitter(150,150, 150);
+        this.emitter.gravity = 50;
+        this.emitter.makeParticles('bubble');
+        /* this.emitter.minAngle = Math.PI;
+        this.emitter.maxAngle = 0;
+        this.emitter.minSpeed = -50
+        this.emitter.masSpeed = 50
+ */
+
+        this.emitter1 = this.game.add.emitter(150,150, 50);
+        this.emitter1.gravity = -10;
+        this.emitter1.makeParticles('bubble');
+        this.emitter1.minAngle = Math.PI;
+        this.emitter1.maxAngle = 0;
+        this.emitter1.minSpeed = -50
+        this.emitter1.masSpeed = 50
+
+
+
+        /*this.emitter1 = this.game.add.emitter(150,150, 50);
+        this.emitter1.gravity = 10;
+        this.emitter1.makeParticles('bubble');
+
+        this.minAngle = 0;
+        this.maxAngle = 0;
+        this.maxSpeed = 50;
+        //this.emitter.setRotation(0, 0);
+        /*this.emitter.setAlpha(0.1, 1, 1000);
+        this.emitter.setScale(0.1, 1, 0.1, 1, 1000, Phaser.Easing.Sinusoidal.Out);
+        this.emitter.start(false, 5000, 50);
+        this.emitter.emitX = 300;*/
+    },
+    startEmit: function (x, y, speed) {
+        this.emitter.x = x;
+        this.emitter.y = y;
+        this.emitter.setXSpeed(-speed, speed)
+        this.emitter.setYSpeed(-5, -55);
+        //this.emitter.particleDrag.set(-speed/10, -speed/15)
+
+        this.emitter1.x = x;
+        this.emitter1.y = y - 10;
+        this.emitter1.minSpeed = -speed/4;
+        this.emitter1.masSpeed = speed/4;
+        //this.emitter1.particleDrag.set(-speed/10, -speed/15)
+
+        this.emitter.start(false, 1000, 1, 1000)
+//        this.emitter1.start(false, 1000, null, 1000)
+    }
+}
+
 var testGraph = function (game) {}
 testGraph.prototype = {
     preload: function () {
@@ -794,4 +874,5 @@ game.state.add('preloader', preloader);
 game.state.add('menu', menu);
 game.state.add('ingame', ingame);
 game.state.add('testGraph', testGraph);
+game.state.add('testGraph2', testGraph2);
 game.state.start('boot');
