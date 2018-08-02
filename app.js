@@ -54,14 +54,14 @@ var states = {
 
 var maxHeight;
 var waterX = 248;
-var waterMaskWidth = 115;
-var waterMaskHeight = 183
-var waterMaskY = 498 - waterMaskHeight;
+var waterMaskWidth = 150;
+var waterMaskHeight;
+var waterMaskY;
 var waterMaskX = 422;
 
 var glassWaterHeight = 0;
-var glassWaterHeightMin = 501;
-var glassWaterHeightMax =  501 - waterMaskHeight;
+var glassWaterHeightMin = 455;
+var glassWaterHeightMax =  232;
 
 var speed = 100;
 var leftMax = 0;
@@ -76,10 +76,12 @@ var glassAngleMin = 0.3;
 var glassAngleMax = 1.5;
 var glassAnchorX = 0.95;
 var glassAnchorY = 0;
-var glassX = 685;
-var glassY = 170;
-var glassY1 = 183;
+var glassX = 685 - 12;
+var glassY = 173;
+var glassY1 = 186;
 
+var mainMaskX = 422;
+var mainMaskY = 232;
 
 var tankWaterMin = 540;
 var tankWaterMax = 540;
@@ -136,7 +138,7 @@ preloader.prototype = {
         this.game.load.image('bubble', 'images/bubble.png');
 
         this.game.load.json('grad');
-       
+
         this.game.load.onLoadComplete.add(function (progress, file, success, t, t1) {
             game.state.start('menu');
         })
@@ -158,7 +160,7 @@ ingame.prototype = {
         this.back.x = 0;
         this.back.y = 0;
 
-        //this.back.visible = false;
+        this.back.visible = false;
 
         this.scoreText = this.game.add.text(50, 20, "Scores: " + scores, {
             align: 'left',
@@ -172,13 +174,14 @@ ingame.prototype = {
         //this.glass.scale.set(0.30);
         this.glass.anchor.y = 1;
         this.glass.x = 420;
-        this.glass.y = 537;
+        this.glass.y = 500;
 
 
 
+        
         this.water = this.game.add.graphics(0, 0);
         this.water.beginFill(0xffbf00);
-        this.water.drawRect(0, 0, waterMaskWidth, waterMaskHeight);
+        this.water.drawRect(0, 0, waterMaskWidth, this.grad.mainMask.grad.length);
         this.water.endFill();
         this.water.x = waterMaskX;
         this.water.y = glassWaterHeightMin;
@@ -187,7 +190,7 @@ ingame.prototype = {
         this.bottle = this.game.add.sprite(0, 0, 'bottle');
         window.bottle = this.bottle;
         this.bottle.x = 0;
-        this.bottle.y = 0;
+        this.bottle.y = -80;
 
         this.flow1 = this.game.add.group();
         this.flow1.addChild(this.bottle);
@@ -353,7 +356,7 @@ ingame.prototype = {
             this.glass.anchor.set(0, 1);
             //this.glass.anchor.y = 1;
             this.glass.x = 420;
-            this.glass.y = 537;
+            this.glass.y = 500;
             this.glass.rotation = 0;
             this.tankWater.y = tankWaterMin;
             state = states.idle;
@@ -510,7 +513,7 @@ ingame.prototype = {
         var mainMask = new Phaser.Image(this.game, 0, 0, 'mainMask');
 
         bmdMask1.copyRect(london, new Phaser.Rectangle(0,0, london.width, london.height), 0,0);
-        bmdMask1.copyRect(mainMask, new Phaser.Rectangle(0, 0, mainMask.width, mainMask.height), 422, 318, 1, 'xor') ;
+        bmdMask1.copyRect(mainMask, new Phaser.Rectangle(0, 0, mainMask.width, mainMask.height), mainMaskX, mainMaskY, 1, 'xor');
         bmdMask1.copyRect(alpha, new Phaser.Rectangle(0, 0, alpha.width, alpha.height), x, y, 1 , 'xor') ;
 
         this.game.cache.addBitmapData('bmd1', bmdMask1);
@@ -527,7 +530,7 @@ ingame.prototype = {
         var mainMask = new Phaser.Image(this.game, 0, 0, 'mainMask');
 
         bmdMask2.copyRect(london, new Phaser.Rectangle(0,0, london.width, london.height), 0,0);
-        bmdMask2.copyRect(mainMask, new Phaser.Rectangle(0, 0, mainMask.width, mainMask.height), 422, 318, 1, 'xor') ;
+        bmdMask2.copyRect(mainMask, new Phaser.Rectangle(0, 0, mainMask.width, mainMask.height), mainMaskX, mainMaskY, 1, 'xor') ;
         bmdMask2.copyRect(alpha, new Phaser.Rectangle(0, 0, alpha.width, alpha.height), x, y, 1 , 'xor') ;
 
         this.game.cache.addBitmapData('bmd2', bmdMask2);
@@ -544,7 +547,7 @@ ingame.prototype = {
         var mainMask = new Phaser.Image(this.game, 0, 0, 'mainMask');
 
         bmdMask3.copyRect(london, new Phaser.Rectangle(0,0, london.width, london.height), 0,0);
-        bmdMask3.copyRect(mainMask, new Phaser.Rectangle(0, 0, mainMask.width, mainMask.height), 422, 318, 1, 'xor') ;
+        bmdMask3.copyRect(mainMask, new Phaser.Rectangle(0, 0, mainMask.width, mainMask.height), mainMaskX, mainMaskY, 1, 'xor') ;
         bmdMask3.copyRect(alpha, new Phaser.Rectangle(0, 0, alpha.width, alpha.height), x, y, 1 , 'xor') ;
 
         this.game.cache.addBitmapData('bmd3', bmdMask3);
@@ -561,7 +564,7 @@ ingame.prototype = {
         var mainMask = new Phaser.Image(this.game, 0, 0, 'mainMask');
 
         bmdMask4.copyRect(london, new Phaser.Rectangle(0,0, london.width, london.height), 0,0);
-        bmdMask4.copyRect(mainMask, new Phaser.Rectangle(0, 0, mainMask.width, mainMask.height), 422, 318, 1, 'xor') ;
+        bmdMask4.copyRect(mainMask, new Phaser.Rectangle(0, 0, mainMask.width, mainMask.height), mainMaskX, mainMaskY, 1, 'xor') ;
         bmdMask4.copyRect(alpha, new Phaser.Rectangle(0, 0, alpha.width, alpha.height), x, y, 1 , 'xor') ;
 
         this.game.cache.addBitmapData('bmd4', bmdMask4);
@@ -631,16 +634,16 @@ ingame.prototype = {
         a = a || 0.3
         g.rotation = a;
 
-        var wt = 115;
-        var wb = 86;
-        var h = 180;
+        var wt = 140;
+        var wb = 104;
+        var h = 219;
         var dw = (wt - wb) / 2 + 3;
         var gx = g.x - 3;
         var gy = g.y + 3;
 
-        var line0 = new Phaser.Line().fromAngle(gx, gy, g.rotation + Math.PI, 15);
+        var line0 = new Phaser.Line().fromAngle(gx + 5, gy, g.rotation + Math.PI, 15);
 
-        var line1_pre = new Phaser.Line(gx,gy, gx - dw, gy + h);
+        var line1_pre = new Phaser.Line(gx,gy, gx - dw + 5, gy + h);
         var angle1 = line1_pre.angle + a;
         var line1 = new Phaser.Line().fromAngle(gx, gy, angle1, line1_pre.length);
 
@@ -649,7 +652,7 @@ ingame.prototype = {
         var line2_pre2 = new Phaser.Line().fromAngle(gx, gy, angle2, line2_pre.length);
         var line2 = new Phaser.Line(line1.end.x, line1.end.y, line2_pre2.end.x, line2_pre2.end.y);
 
-        var line3_pre = new Phaser.Line().fromAngle(gx, gy, g.rotation + Math.PI, wt + 3);
+        var line3_pre = new Phaser.Line().fromAngle(gx, gy, g.rotation + Math.PI, wt - 8);
         var line3_pre2 = new Phaser.Line(line2.end.x, line2.end.y, line3_pre.end.x, line3_pre.end.y);
         var line3_pre3 = new Phaser.Line().fromAngle(line0.end.x, line0.end.y, Math.PI, 500);
 
@@ -778,7 +781,7 @@ testGraph.prototype = {
         this.game.load.image('mask2', 'prepareimage/glass2mask.png');
         this.game.load.image('mask3', 'prepareimage/glass3mask.png');
         this.game.load.image('mask4', 'prepareimage/glass4mask.png');
-        this.game.load.image('mainMask', 'prepareimage/glassMainMask.png');
+        this.game.load.image('mainMask', 'images/glassMainMask.png');
         this.game.load.image('london', 'images/bg_london.png');
 
         this.game.load.json('grad');
@@ -786,19 +789,7 @@ testGraph.prototype = {
     },
     create: function () {
         window.self = this;
-        this.game.stage.backgroundColor = 25000
-        this.bmd = this.game.make.bitmapData(this.game.width, this.game.height);
-
-        this.bmdMask = this.game.make.bitmapData(this.game.width, this.game.height);
-        this.bmdMask.context.fillStyle = '#ffffff'
-        var alpha = new Phaser.Image(this.game, 0,0, 'alpha', 'glass1mask')
-        var london = new Phaser.Image(this.game, 0,0, 'london');
-        this.bmdMask.copyRect(london, new Phaser.Rectangle(0,0, london.width, london.height), 0,0);
-        this.bmdMask.copyRect(alpha, new Phaser.Rectangle(0, 0, alpha.width, alpha.height), 150,150, 1, 'xor') ;
-        this.bg = this.game.add.sprite(0,0,this.bmdMask);
-
-        return;
-        var el = game.cache._cache.image.mainMask.data;
+        var el = game.cache._cache.image["mainMask"].data;
         game.context.drawImage(el, 0,0, el.width, el.height);
         window.image = game.context.getImageData(0,0,el.width, el.height);
         var data = image.data;
