@@ -1,3 +1,3 @@
 # pour
 readme
-ver 1.5
+ver 1.6
