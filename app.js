@@ -54,14 +54,14 @@ var states = {
 
 var maxHeight;
 var waterX = 248;
-var waterMaskWidth = 150;
+var waterMaskWidth = 162;
 var waterMaskHeight;
 var waterMaskY;
-var waterMaskX = 422;
+var waterMaskX = 382;
 
 var glassWaterHeight = 0;
-var glassWaterHeightMin = 455;
-var glassWaterHeightMax =  232;
+var glassWaterHeightMin = 448;
+var glassWaterHeightMax =  190;
 
 var speed = 100;
 var leftMax = 0;
@@ -78,10 +78,10 @@ var glassAnchorX = 0.95;
 var glassAnchorY = 0;
 var glassX = 685 - 12;
 var glassY = 173;
-var glassY1 = 186;
+var glassY1 = 182;
 
-var mainMaskX = 422;
-var mainMaskY = 232;
+var mainMaskX = 382;
+var mainMaskY = 190;
 
 var tankWaterMin = 540;
 var tankWaterMax = 540;
@@ -172,7 +172,7 @@ ingame.prototype = {
 
         //this.glass.scale.set(0.30);
         this.glass.anchor.y = 1;
-        this.glass.x = 420;
+        this.glass.x = 380;
         this.glass.y = 500;
 
 
@@ -264,10 +264,6 @@ ingame.prototype = {
         }, this);
 
 
-        //heightCurrent = Math.floor(Math.random() * (lineMin - lineMax));
-        //lineCurrent = heightCurrent + lineMax;
-
-
     },
     update: function () {
         if (state == states.pressing) {
@@ -353,7 +349,7 @@ ingame.prototype = {
         } else if (state == states.scores) {
             this.glass.anchor.set(0, 1);
             //this.glass.anchor.y = 1;
-            this.glass.x = 420;
+            this.glass.x = 380;
             this.glass.y = 500;
             this.glass.rotation = 0;
             this.glass.visible = true;
@@ -633,9 +629,9 @@ ingame.prototype = {
         a = a || 0.3
         g.rotation = a;
 
-        var wt = 140;
-        var wb = 104;
-        var h = 219;
+        var wt = 162;
+        var wb = 120;
+        var h = 258;
         var dw = (wt - wb) / 2 + 3;
         var gx = g.x - 3;
         var gy = g.y + 3;
@@ -865,4 +861,5 @@ game.state.add('menu', menu);
 game.state.add('ingame', ingame);
 game.state.add('testGraph', testGraph);
 game.state.add('testGraph2', testGraph2);
+//game.state.start('testGraph');
 game.state.start('boot');
