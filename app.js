@@ -319,6 +319,7 @@ ingame.prototype = {
                     state = states.released;
                 } else {
                     state = states.menu;
+                    this.glass.visible = false;
                 }
 
 
@@ -355,6 +356,7 @@ ingame.prototype = {
             this.glass.x = 420;
             this.glass.y = 500;
             this.glass.rotation = 0;
+            this.glass.visible = true;
             this.tankWater.y = tankWaterMin;
             state = states.idle;
             this.scoreText.text = 'Scores: ' + scores;
