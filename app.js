@@ -187,7 +187,7 @@ ingame.prototype = {
         this.bottle = this.game.add.sprite(0, 0, 'bottle');
         window.bottle = this.bottle;
         this.bottle.x = 0;
-        this.bottle.y = -80;
+        this.bottle.y = -120;
 
         this.flow1 = this.game.add.group();
         this.flow1.addChild(this.bottle);
