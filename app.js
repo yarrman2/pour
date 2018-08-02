@@ -111,7 +111,6 @@ boot.prototype = {
 var preloader = function (game) {}
 preloader.prototype = {
     preload: function () {
-
         var bgmd = this.game.make.bitmapData(game.widh, 15);
         bgmd.context.fillStyle = '#ffa00f';
         bgmd.context.fillRect(0, 0, game.width, 15);
@@ -177,8 +176,6 @@ ingame.prototype = {
         this.glass.y = 500;
 
 
-
-        
         this.water = this.game.add.graphics(0, 0);
         this.water.beginFill(0xffbf00);
         this.water.drawRect(0, 0, waterMaskWidth, this.grad.mainMask.grad.length);
