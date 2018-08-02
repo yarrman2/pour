@@ -159,7 +159,7 @@ ingame.prototype = {
         this.back.x = 0;
         this.back.y = 0;
 
-        this.back.visible = false;
+        //this.back.visible = false;
 
         this.scoreText = this.game.add.text(50, 20, "Scores: " + scores, {
             align: 'left',
