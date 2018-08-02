@@ -373,7 +373,7 @@ ingame.prototype = {
     },
     getCurrentLine: function () {
         var props = this.tanksProps[this.tankIdx];
-        lineCurrent = Phaser.Math.linear(0.3 * props.height, 0.7 * props.height, Math.random());
+        lineCurrent = Phaser.Math.linear(0.6 * props.height, 0.85 * props.height, Math.random());
     },
     calcResult: function (S) {
        var _frameName = this.tank.frameName;
